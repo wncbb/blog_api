@@ -1,0 +1,31 @@
+Read:
+  DriverName:   "postgres"
+  Timeout:      "1s"
+  ReadTimeout:  "1s"
+  WriteTimeout: "1s"
+  User:         "<user>"
+  Password:     "<password>"
+  DBName:       "<db name>"
+  Charset:      "utf8"
+  Host:         "<host>"
+  Port:         "<port>"
+  MaxIdleConns: 5
+  MaxOpenConns: 5
+  SSLMode:      <true or false>
+  Debug: <true or false>
+
+Write:
+  DriverName:   "postgres"
+  Timeout:      "1s"
+  ReadTimeout:  "1s"
+  WriteTimeout: "1s"
+  User:         "<user>"
+  Password:     "<password>"
+  DBName:       "<db name>"
+  Charset:      "utf8"
+  Host:         "<IP>"
+  Port:         "<PORT>"
+  MaxIdleConns: 5
+  MaxOpenConns: 10
+  SSLMode:      <true or false>
+  Debug: <true or false>

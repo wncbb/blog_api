@@ -1,0 +1,4 @@
+Ip: "<ip>"
+Port: "<port>"
+PgDb: "./conf/pg_db.yaml"
+SessionRedis: "./conf/redis_session.yaml"

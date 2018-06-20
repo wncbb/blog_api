@@ -1,0 +1,79 @@
+package main
+
+import (
+	"github.com/sirupsen/logrus"
+	"wncbb.cn/db/model/user"
+	_ "wncbb.cn/db/model/user"
+	"wncbb.cn/db/pg"
+)
+
+func main() {
+	// mainLog=logrus.WithFields(logrus.Fields{
+	// 	"key": "value",
+	// })
+	// mainLog.Info("blabla")
+	logrus.WithFields(logrus.Fields{
+		"key": "value",
+	}).Info("start server")
+	configMap := make(map[string]*pg.DBConfig, 0)
+	configMap["test"] = &pg.DBConfig{
+		DriverName:   "postgres",
+		Timeout:      "1s",
+		ReadTimeout:  "1s",
+		WriteTimeout: "1s",
+		User:         "test1",
+		Password:     "test1",
+		DBName:       "test1",
+		Charset:      "",
+		Host:         "127.0.0.1",
+		Port:         "5432",
+		MaxIdleConns: 5,
+		MaxOpenConns: 5,
+		SSLMode:      false,
+	}
+	err := pg.InitConn(configMap)
+	if err != nil {
+		panic(err)
+	}
+
+	dbhandler, err := pg.GetHandler("test")
+
+	userRepo := user.NewUserRepository(dbhandler)
+
+	userRepo.Migrate()
+
+	// user := user.User{
+	// 	ID: 12,
+	// }
+
+	// userRepo.UpdateViaSave(&user)
+
+	/*
+		user := user.User{
+			Name:     "todd",
+			Password: "123",
+			Secret:   "secret",
+		}
+
+		err = userRepo.Create(&user)
+		fmt.Println(err)
+
+		// if err != nil {
+		// 	fmt.Println(err)
+		// } else {
+		// 	type user struct {
+		// 		Name string
+		// 		Age  int
+		// 	}
+		// 	userList := make([]*user, 0)
+		// 	conn, err := dbhandler.GetConnection()
+		// 	if err != nil {
+		// 		panic(err)
+		// 	}
+		// 	conn.Raw("select name, age from user_name").Scan(&userList)
+		// 	for _, v := range userList {
+		// 		fmt.Println(v.Name, v.Age)
+		// 	}
+		// }
+	*/
+}

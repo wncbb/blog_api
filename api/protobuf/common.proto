@@ -1,0 +1,57 @@
+syntax="proto3";
+
+option go_package="protobuf";
+
+enum ResponseCode{
+    Success=0;
+    Empty=1;
+    QueryArgumentsError=10001;
+    ShouldLogoutFirst=10002;
+    ShouldLoginFirst=10003;
+    InternalError=20001;
+}
+
+message BaseResponse{
+    ResponseCode code=1;
+    string msg=2;
+}
+
+message LoginData{
+    string userId=1;
+    string msg=2;
+}
+
+message LoginResponse{
+    ResponseCode code=1;
+    string msg=2;
+    LoginData data=3;
+}
+
+message ArticleData{
+    string id=1;
+    string title=2;
+    string content=3;
+}
+
+message ArticleResponse{
+    ResponseCode code=1;
+    string msg=2;
+    ArticleData data=3;
+}
+
+message CreateArticleResponse{
+    ResponseCode code=1;
+    string msg=2;
+    ArticleData data=3;
+}
+
+message RegisterData{
+    string id=1;
+    string showMsg=2;
+}
+
+message RegisterResponse{
+    ResponseCode code=1;
+    string msg=2;
+    RegisterData data=3;
+}
