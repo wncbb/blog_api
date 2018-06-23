@@ -55,6 +55,11 @@ func main() {
 	r.GET("/api/session/getname", handler_session.TestGetName())
 	r.GET("/api/user/showme", handler_user.ShowMe())
 
+	if true {
+		model_article.Migrate()
+		model_user.Migrate()
+	}
+
 	g := r.Group("/api")
 	g.POST(
 		"/register",
