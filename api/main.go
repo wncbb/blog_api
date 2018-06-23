@@ -7,7 +7,6 @@ import (
 	handler_article "blog_api/api/handler/article"
 	handler_captcha "blog_api/api/handler/captcha"
 	handler_login "blog_api/api/handler/login"
-	handler_register "blog_api/api/handler/register"
 	handler_session "blog_api/api/handler/session"
 	handler_user "blog_api/api/handler/user"
 	middleware_check_login "blog_api/api/middleware/check_login"
@@ -55,17 +54,17 @@ func main() {
 	r.GET("/api/session/getname", handler_session.TestGetName())
 	r.GET("/api/user/showme", handler_user.ShowMe())
 
-	if true {
-		model_article.Migrate()
-		model_user.Migrate()
-	}
+	// if true {
+	// 	model_article.Migrate()
+	// 	model_user.Migrate()
+	// }
 
 	g := r.Group("/api")
-	g.POST(
-		"/register",
-		middleware_write_response.WriteResponseMw(),
-		handler_register.Register(),
-	)
+	// g.POST(
+	// 	"/register",
+	// 	middleware_write_response.WriteResponseMw(),
+	// 	handler_register.Register(),
+	// )
 	g.POST(
 		"/login",
 		middleware_write_response.WriteResponseMw(),
