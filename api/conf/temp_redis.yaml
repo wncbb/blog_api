@@ -1,0 +1,6 @@
+Temp:
+  Ip: 127.0.0.1
+  Port: 6379
+  Debug: true
+  MaxIdlNum: 10
+  Secret: "secret"

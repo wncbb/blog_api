@@ -3,12 +3,13 @@ package cache
 import (
 	"time"
 
+	"blog_api/api/define"
+	"blog_api/log"
+
+	utilsCache "blog_api/cache.v2"
 	"github.com/gin-gonic/gin"
 	"github.com/gin-gonic/gin/binding"
 	"github.com/golang/protobuf/proto"
-	"wncbb.cn/api/define"
-	utilsCache "wncbb.cn/cache.v2"
-	"wncbb.cn/log"
 )
 
 func CacheMw(ttl time.Duration, cacheKey string, respPb proto.Message) func(*gin.Context) {

@@ -4,7 +4,7 @@ import (
 	"testing"
 	"time"
 
-	"wncbb.cn/log"
+	"blog_api/log"
 )
 
 func Test_Normal(t *testing.T) {

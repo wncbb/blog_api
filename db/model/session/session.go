@@ -4,7 +4,7 @@ import (
 	"errors"
 	"time"
 
-	"wncbb.cn/db/pg"
+	"blog_api/db/pg"
 )
 
 type Session struct {

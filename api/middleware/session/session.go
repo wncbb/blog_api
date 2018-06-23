@@ -1,14 +1,15 @@
 package session
 
 import (
+	"blog_api/config"
+
 	"github.com/gin-contrib/sessions"
 	"github.com/gin-contrib/sessions/redis"
 	"github.com/gin-gonic/gin"
-	"wncbb.cn/config"
 )
 
 func InitSessionRedis(sessionRedisConfig *config.SessionRedisConfig) redis.Store {
-	store, err := redis.NewStore(sessionRedisConfig.MaxIdlNum, "tcp", sessionRedisConfig.GetConnString(), sessionRedisConfig.Password, []byte(sessionRedisConfig.Secret))
+	store, err := redis.NewStoreWithDB(sessionRedisConfig.MaxIdlNum, "tcp", sessionRedisConfig.GetConnString(), sessionRedisConfig.Password, sessionRedisConfig.Db, []byte(sessionRedisConfig.Secret))
 	if err != nil {
 		panic(err)
 	}

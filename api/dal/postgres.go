@@ -1,7 +1,7 @@
 package dal
 
 import (
-	"wncbb.cn/db"
+	"blog_api/db"
 )
 
 func InitPostgres(dbConfigMap map[string]*db.DBConfig) {

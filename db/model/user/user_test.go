@@ -4,8 +4,8 @@ import (
 	"fmt"
 	"testing"
 
-	"wncbb.cn/db"
-	"wncbb.cn/log"
+	"blog_api/db"
+	"blog_api/log"
 )
 
 func init() {

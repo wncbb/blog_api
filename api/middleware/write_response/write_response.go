@@ -9,7 +9,7 @@ import (
 	"github.com/golang/protobuf/jsonpb"
 	"github.com/golang/protobuf/proto"
 
-	"wncbb.cn/api/define"
+	"blog_api/api/define"
 )
 
 type BaseResponse interface {
@@ -47,9 +47,8 @@ func WriteResponseMw() func(*gin.Context) {
 		// 可以拿到Code, Msg
 		// baseResp, ok := resp.(BaseResponse)
 		// if ok {
-		// 	fmt.Printf("LINE 47: %v %v %v\n", baseResp.GetCode(), baseResp.GetMsg(), ok)
-		// } else {
-		// 	fmt.Printf("LINE 49\n")
+		// 	if baseResp.GetMsg() == "" {
+		// 	}
 		// }
 
 		switch generalQuery.Format {

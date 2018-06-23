@@ -2,9 +2,9 @@ package main
 
 import (
 	"github.com/sirupsen/logrus"
-	"wncbb.cn/db/model/user"
-	_ "wncbb.cn/db/model/user"
-	"wncbb.cn/db/pg"
+	"blog_api/db/model/user"
+	_ "blog_api/db/model/user"
+	"blog_api/db/pg"
 )
 
 func main() {

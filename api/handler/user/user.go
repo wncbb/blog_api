@@ -3,9 +3,10 @@ package user
 import (
 	"net/http"
 
+	"blog_api/api/define"
+	sessionMw "blog_api/api/middleware/session"
+
 	"github.com/gin-gonic/gin"
-	"wncbb.cn/api/define"
-	sessionMw "wncbb.cn/api/middleware/session"
 )
 
 func ShowMe() gin.HandlerFunc {

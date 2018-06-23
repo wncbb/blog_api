@@ -4,18 +4,22 @@ import (
 	"errors"
 	"strconv"
 
+	api_define "blog_api/api/define"
+	"blog_api/api/handler"
+	middleware_session "blog_api/api/middleware/session"
+	pb "blog_api/api/protobuf"
+	service_captcha "blog_api/api/service/captcha"
+	model_user "blog_api/db/model/user"
+
 	"github.com/gin-gonic/gin"
 	"github.com/gin-gonic/gin/binding"
-	api_define "wncbb.cn/api/define"
-	"wncbb.cn/api/handler"
-	middleware_session "wncbb.cn/api/middleware/session"
-	pb "wncbb.cn/api/protobuf"
-	model_user "wncbb.cn/db/model/user"
 )
 
 type LoginPost struct {
-	Account  string `form:"account" json:"account" binding:"account"`
-	Password string `form:"password" json:"password" binding:"password"`
+	Account     string `form:"account" json:"account" binding:"account"`
+	Password    string `form:"password" json:"password" binding:"password"`
+	CaptchaId   string `form:"captchaId" json:"captchaId"`
+	CaptchaCode string `form:"captchaCode" json:"captchaCode"`
 }
 
 func Logout() gin.HandlerFunc {
@@ -46,6 +50,11 @@ func Login() gin.HandlerFunc {
 
 		// Bind如果出错会直接处理错误,后面没办法处理了
 		err = c.ShouldBindWith(qry, binding.JSON)
+
+		handler.LogDebug("handler.login", err, map[string]interface{}{
+			"qry": qry,
+		})
+
 		if err != nil {
 			resp.Code = pb.ResponseCode_QueryArgumentsError
 			c.Set(api_define.CtxRespKey, resp)
@@ -57,6 +66,20 @@ func Login() gin.HandlerFunc {
 		userId := s.Get(api_define.SessionUserIdKey)
 		if userId != nil {
 			resp.Code = pb.ResponseCode_ShouldLogoutFirst
+			c.Set(api_define.CtxRespKey, resp)
+			return
+		}
+
+		showMsg, err := service_captcha.VerifyCaptcha(qry.CaptchaId, qry.CaptchaCode)
+		if err != nil {
+			resp.Code = pb.ResponseCode_VerifyCaptchaError
+			c.Set(api_define.CtxRespKey, resp)
+		}
+		if showMsg != api_define.ShowMsgSuccess {
+			resp.Code = pb.ResponseCode_Success
+			resp.Data = &pb.LoginData{
+				Msg: showMsg,
+			}
 			c.Set(api_define.CtxRespKey, resp)
 			return
 		}

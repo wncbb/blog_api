@@ -4,8 +4,10 @@ import (
 	"fmt"
 	"os"
 
+	"blog_api/db"
+	"blog_api/log"
+
 	"github.com/spf13/viper"
-	"wncbb.cn/db"
 )
 
 var PgReadModule = "read"
@@ -40,7 +42,7 @@ func parsePgDbYamlConf(dbConfName string) {
 		}
 	}
 	for k, v := range pgDBConfMap {
-		fmt.Printf("LINE36 %v %v %+v\n", k, v, v)
+		log.DefaultLog().Debug("pgDBConfMap: %v %v %+v\n", k, v, v)
 	}
 }
 

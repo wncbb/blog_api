@@ -3,13 +3,14 @@ package register
 import (
 	"strconv"
 
+	"blog_api/api/define"
+	"blog_api/api/handler"
+	middleware_session "blog_api/api/middleware/session"
+	pb "blog_api/api/protobuf"
+	model_user "blog_api/db/model/user"
+
 	"github.com/gin-gonic/gin"
 	"github.com/gin-gonic/gin/binding"
-	"wncbb.cn/api/define"
-	"wncbb.cn/api/handler"
-	middleware_session "wncbb.cn/api/middleware/session"
-	pb "wncbb.cn/api/protobuf"
-	model_user "wncbb.cn/db/model/user"
 )
 
 type RegisterPost struct {

@@ -8,8 +8,9 @@ import (
 	_ "github.com/jinzhu/gorm/dialects/mysql"
 	_ "github.com/jinzhu/gorm/dialects/postgres"
 
+	"blog_api/werrors"
+
 	"github.com/pkg/errors"
-	"wncbb.cn/werrors"
 )
 
 type DBHandler struct {

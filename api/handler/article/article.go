@@ -4,12 +4,14 @@ import (
 	"fmt"
 	"strconv"
 
+	"blog_api/api/define"
+	api_define "blog_api/api/define"
+	pb "blog_api/api/protobuf"
+	"blog_api/db/model/article"
+	model_article "blog_api/db/model/article"
+	"blog_api/log"
+
 	"github.com/gin-gonic/gin"
-	"wncbb.cn/api/define"
-	pb "wncbb.cn/api/protobuf"
-	"wncbb.cn/db/model/article"
-	model_article "wncbb.cn/db/model/article"
-	"wncbb.cn/log"
 )
 
 type CreateArticleRequest struct {
@@ -54,6 +56,60 @@ func Create() gin.HandlerFunc {
 		return
 
 	}
+}
+
+type GetListQuery struct {
+	Offset int64 `form:"offset" json:"offset"`
+	Limit  int64 `form:"limit" json:"limit"`
+}
+
+func GetList() gin.HandlerFunc {
+	return func(c *gin.Context) {
+		resp := &pb.ArticleListResponse{}
+
+		qry := &GetListQuery{}
+		err := c.BindQuery(qry)
+		if err != nil {
+			resp.Code = pb.ResponseCode_QueryArgumentsError
+			c.Set(api_define.CtxRespKey, resp)
+		}
+
+		list, err := model_article.GetList(qry.Offset, qry.Limit)
+		if err != nil {
+			resp.Code = pb.ResponseCode_InternalError
+			c.Set(api_define.CtxRespKey, resp)
+			return
+		}
+
+		num, err := model_article.GetNum()
+		if err != nil {
+			resp.Code = pb.ResponseCode_InternalError
+			c.Set(api_define.CtxRespKey, resp)
+			return
+		}
+
+		respData := &pb.ArticleListData{}
+		respData.Num = strconv.FormatInt(num, 10)
+		respData.List = toPbArticleList(list)
+
+		resp.Code = pb.ResponseCode_Success
+		resp.Data = respData
+		c.Set(api_define.CtxRespKey, resp)
+		return
+	}
+}
+
+func toPbArticleList(list []*model_article.Article) []*pb.ArticleData {
+	pbList := make([]*pb.ArticleData, 0, len(list))
+	for _, v := range list {
+		pbArticle := &pb.ArticleData{
+			Title:   v.Title,
+			Id:      strconv.FormatInt(v.Id, 10),
+			Content: v.Content,
+		}
+		pbList = append(pbList, pbArticle)
+	}
+	return pbList
 }
 
 func GetById() gin.HandlerFunc {

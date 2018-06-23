@@ -1,10 +1,11 @@
 package check_login
 
 import (
+	api_define "blog_api/api/define"
+	middleware_session "blog_api/api/middleware/session"
+	pb "blog_api/api/protobuf"
+
 	"github.com/gin-gonic/gin"
-	api_define "wncbb.cn/api/define"
-	middleware_session "wncbb.cn/api/middleware/session"
-	pb "wncbb.cn/api/protobuf"
 )
 
 func CheckLogin() gin.HandlerFunc {

@@ -3,8 +3,9 @@ package session
 import (
 	"net/http"
 
+	"blog_api/api/middleware/session"
+
 	"github.com/gin-gonic/gin"
-	"wncbb.cn/api/middleware/session"
 )
 
 func TestSetName() gin.HandlerFunc {

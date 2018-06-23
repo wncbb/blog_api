@@ -4,11 +4,12 @@ import (
 	"fmt"
 	"time"
 
+	"blog_api/db"
+	"blog_api/define"
+	"blog_api/werrors"
+
 	"github.com/jinzhu/gorm"
 	"github.com/pkg/errors"
-	"wncbb.cn/db"
-	"wncbb.cn/define"
-	"wncbb.cn/werrors"
 )
 
 type UserCore struct {

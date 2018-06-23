@@ -3,26 +3,29 @@ package main
 import (
 	"time"
 
+	"blog_api/api/dal"
+	handler_article "blog_api/api/handler/article"
+	handler_captcha "blog_api/api/handler/captcha"
+	handler_login "blog_api/api/handler/login"
+	handler_register "blog_api/api/handler/register"
+	handler_session "blog_api/api/handler/session"
+	handler_user "blog_api/api/handler/user"
+	middleware_check_login "blog_api/api/middleware/check_login"
+	middleware_cors "blog_api/api/middleware/cors"
+	middleware_session "blog_api/api/middleware/session"
+	middleware_write_response "blog_api/api/middleware/write_response"
+	pb "blog_api/api/protobuf"
+	service_captcha "blog_api/api/service/captcha"
+	_ "blog_api/api/validator"
+	"blog_api/config"
+	model_article "blog_api/db/model/article"
+	model_user "blog_api/db/model/user"
+	"blog_api/define"
+	"blog_api/log"
+
+	middleware_cache "blog_api/api/middleware/cache.v2"
 	"github.com/gin-contrib/pprof"
 	"github.com/gin-gonic/gin"
-	"wncbb.cn/api/dal"
-	handler_article "wncbb.cn/api/handler/article"
-	handler_login "wncbb.cn/api/handler/login"
-	handler_register "wncbb.cn/api/handler/register"
-	handler_session "wncbb.cn/api/handler/session"
-	handler_user "wncbb.cn/api/handler/user"
-	middleware_cache "wncbb.cn/api/middleware/cache.v2"
-	middleware_check_login "wncbb.cn/api/middleware/check_login"
-	middleware_session "wncbb.cn/api/middleware/session"
-
-	middleware_write_response "wncbb.cn/api/middleware/write_response"
-	pb "wncbb.cn/api/protobuf"
-	_ "wncbb.cn/api/validator"
-	"wncbb.cn/config"
-	model_article "wncbb.cn/db/model/article"
-	model_user "wncbb.cn/db/model/user"
-	"wncbb.cn/define"
-	"wncbb.cn/log"
 )
 
 func main() {
@@ -35,8 +38,11 @@ func main() {
 	// init module
 	model_user.Init()
 	model_article.Init()
+	service_captcha.Init()
 
 	r := gin.Default()
+
+	r.Use(middleware_cors.Cors(config.GetCorsConfig()))
 
 	// use session middleware
 	r.Use(middleware_session.Session(define.SESSION_NAME, config.GetSessionRedisConfig()))
@@ -66,18 +72,46 @@ func main() {
 		middleware_write_response.WriteResponseMw(),
 		handler_login.Logout(),
 	)
+
+	g.GET("/articles",
+		middleware_write_response.WriteResponseMw(),
+		middleware_cache.CacheMw(10*time.Second, "key", &pb.ArticleListResponse{}),
+		handler_article.GetList(),
+	)
+
 	g.GET(
 		"/articles/:articleId",
 		middleware_write_response.WriteResponseMw(),
 		middleware_cache.CacheMw(10*time.Second, "key", &pb.ArticleResponse{}),
 		handler_article.GetById(),
 	)
+
+	// g.GET(
+	// 	"/articles",
+	// 	middleware_write_response.WriteResponseMw(),
+	// 	middleware_cache.CacheMw(10*time.Second, "key", &pb.ArticleResponse{}),
+	// 	handler_article.GetArticlesByU
+	// )
 	g.POST(
 		"/articles",
 		middleware_write_response.WriteResponseMw(),
 		middleware_check_login.CheckLogin(),
 		handler_article.Create(),
 	)
+
+	g.GET(
+		"/captcha",
+		middleware_write_response.WriteResponseMw(),
+		handler_captcha.GetCaptcha(),
+	)
+	g.GET(
+		"/captcha/verify",
+		middleware_write_response.WriteResponseMw(),
+		handler_captcha.VerifyCaptcha(),
+	)
+	// g.POST(
+	// 	"/captcha",
+	// )
 
 	log.DefaultLog().Debugf("Starting")
 	r.Run(config.RunAddr())

@@ -1,0 +1,7 @@
+Session:
+  Ip: <ip>
+  Port: <port>
+  Debug: <true or false>
+  MaxIdlNum: 10
+  Secret: "<secret>"
+  Password: "<password>"

@@ -3,11 +3,12 @@ package cache
 import (
 	"time"
 
+	"blog_api/api/define"
+	"blog_api/cache"
+	"blog_api/log"
+
 	"github.com/gin-gonic/gin"
 	"github.com/golang/protobuf/proto"
-	"wncbb.cn/api/define"
-	"wncbb.cn/cache"
-	"wncbb.cn/log"
 )
 
 type CacheStatus int32

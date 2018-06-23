@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"testing"
 
-	"wncbb.cn/db/pg"
+	"blog_api/db/pg"
 )
 
 var repo *SessionRepository

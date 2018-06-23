@@ -8,7 +8,9 @@ enum ResponseCode{
     QueryArgumentsError=10001;
     ShouldLogoutFirst=10002;
     ShouldLoginFirst=10003;
-    InternalError=20001;
+    InternalError=40001;
+    GenRandomError=40002;
+    VerifyCaptchaError=40003;
 }
 
 message BaseResponse{
@@ -39,6 +41,17 @@ message ArticleResponse{
     ArticleData data=3;
 }
 
+message ArticleListData{
+    repeated ArticleData list=1;
+    string num=2;
+}
+
+message ArticleListResponse{
+    ResponseCode code=1;
+    string msg=2;
+    ArticleListData data=3;
+}
+
 message CreateArticleResponse{
     ResponseCode code=1;
     string msg=2;
@@ -54,4 +67,25 @@ message RegisterResponse{
     ResponseCode code=1;
     string msg=2;
     RegisterData data=3;
+}
+
+message GetCaptchaData{
+    string captchaData=1;
+    string captchaId=2;
+}
+
+message GetCaptchaResponse{
+    ResponseCode code=1;
+    string msg=2;
+    GetCaptchaData data=3;
+}
+
+message VerifyCaptchaData{
+    string showMsg=1;
+}
+
+message VerifyCaptchaResponse{
+    ResponseCode code=1;
+    string msg=2;
+    VerifyCaptchaData data=3;
 }

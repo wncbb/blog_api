@@ -4,10 +4,11 @@ import (
 	"fmt"
 	"time"
 
+	"blog_api/db"
+	"blog_api/define"
+
 	"github.com/jinzhu/gorm"
 	"github.com/pkg/errors"
-	"wncbb.cn/db"
-	"wncbb.cn/define"
 )
 
 type Article struct {
@@ -58,6 +59,39 @@ func Migrate() error {
 	 */
 
 	return nil
+}
+
+func GetList(offset, limit int64) ([]*Article, error) {
+	conn, err := readDbHandler.GetConnection()
+	if err != nil {
+		return nil, errors.WithStack(err)
+	}
+	list, err := getList(conn, offset, limit)
+	return list, errors.WithStack(err)
+}
+
+func getList(conn *gorm.DB, offset, limit int64) ([]*Article, error) {
+	articles := make([]*Article, 0, limit)
+	err := conn.Model(&Article{}).Order("created_at").Offset(offset).Limit(limit).Find(&articles).Error
+	if err != nil {
+		err = errors.WithStack(err)
+	}
+	return articles, err
+}
+
+func GetNum() (int64, error) {
+	conn, err := readDbHandler.GetConnection()
+	if err != nil {
+		return 0, errors.WithStack(err)
+	}
+	num, err := getNum(conn)
+	return num, errors.WithStack(err)
+}
+
+func getNum(conn *gorm.DB) (int64, error) {
+	var num int64
+	err := conn.Model(&Article{}).Count(&num).Error
+	return num, errors.WithStack(err)
 }
 
 func GetById(id int64) (article *Article, err error) {

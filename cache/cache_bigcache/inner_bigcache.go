@@ -3,9 +3,10 @@ package cache_bigcache
 import (
 	"time"
 
+	"blog_api/cache/define"
+
 	"github.com/allegro/bigcache"
 	"github.com/pkg/errors"
-	"wncbb.cn/cache/define"
 )
 
 type InnerBigCache struct {

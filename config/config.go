@@ -5,8 +5,9 @@ import (
 	"fmt"
 	"os"
 
+	"blog_api/log"
+
 	"github.com/spf13/viper"
-	"wncbb.cn/log"
 )
 
 type Conf struct {
@@ -15,6 +16,8 @@ type Conf struct {
 	Port         string
 	PgDb         string
 	SessionRedis string
+	TempRedis    string
+	Cors         string
 }
 
 var conf *Conf
@@ -26,6 +29,8 @@ func init() {
 		Port:         "",
 		PgDb:         "",
 		SessionRedis: "",
+		TempRedis:    "",
+		Cors:         "",
 	}
 }
 
@@ -58,13 +63,12 @@ func parseConfFile() {
 		fmt.Fprintf(os.Stderr, "%s\n", msg)
 		panic(err)
 	}
+	log.DefaultLog().Debug("conf: %v", conf)
 }
 
 func Init() {
 	parseConfFile()
-	log.DefaultLog().Errorf("LINE64: %v", conf.Ip)
 	parseCmdArgs()
-	log.DefaultLog().Errorf("LINE63: ip:%v port:%v", conf.Ip, conf.Port)
 	parsePgDbYamlConf(conf.PgDb)
 }
 
@@ -75,4 +79,12 @@ func RunAddr() string {
 
 func GetSessionRedisConfFile() string {
 	return conf.SessionRedis
+}
+
+func GetTempRedisConfFile() string {
+	return conf.TempRedis
+}
+
+func GetCorsConfFile() string {
+	return conf.Cors
 }

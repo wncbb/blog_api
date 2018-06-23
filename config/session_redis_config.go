@@ -13,6 +13,7 @@ type SessionRedisConfig struct {
 	MaxIdlNum int
 	Secret    string
 	Password  string
+	Db        string
 }
 
 func (p *SessionRedisConfig) GetConnString() string {
@@ -26,6 +27,7 @@ func GetDefaultSessionRedisConfig() *SessionRedisConfig {
 		MaxIdlNum: 10,
 		Secret:    "secret",
 		Password:  "",
+		Db:        "0",
 	}
 }
 
