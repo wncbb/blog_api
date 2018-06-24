@@ -1,6 +1,7 @@
 package main
 
 import (
+	"net/http"
 	"time"
 
 	"blog_api/api/dal"
@@ -118,5 +119,20 @@ func main() {
 	// )
 
 	log.DefaultLog().Debugf("Starting")
+	go accessDatabase()
 	r.Run(config.RunAddr())
+
+}
+
+func accessDatabase() {
+	tm := time.NewTicker(3600 * time.Second)
+	for {
+		select {
+		case <-tm.C:
+			func() {
+				resp, err := http.Get("http://wncbb.cn/api/articles?offset=0&limit=1")
+				log.DefaultLog().Info("%v %v", resp, err)
+			}()
+		}
+	}
 }
