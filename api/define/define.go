@@ -4,6 +4,8 @@ import (
 	pb "blog_api/api/protobuf"
 )
 
+const CtxLogIdKey = "logId"
+
 const CtxRespKey = "resp"
 const CtxNeedCacheKey = "needCache"
 const CtxUserIdKey = "userId"

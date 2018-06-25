@@ -1,10 +1,8 @@
 package main
 
 import (
-	"net/http"
-	"time"
-
 	"blog_api/api/dal"
+	api_define "blog_api/api/define"
 	handler_article "blog_api/api/handler/article"
 	handler_captcha "blog_api/api/handler/captcha"
 	handler_login "blog_api/api/handler/login"
@@ -22,6 +20,9 @@ import (
 	model_user "blog_api/db/model/user"
 	"blog_api/define"
 	"blog_api/log"
+	"blog_api/util/gostrgen"
+	"net/http"
+	"time"
 
 	middleware_cache "blog_api/api/middleware/cache.v2"
 	"github.com/gin-contrib/pprof"
@@ -41,7 +42,15 @@ func main() {
 	service_captcha.Init()
 
 	r := gin.Default()
-
+	r.Use(func(c *gin.Context) {
+		// 每个请求有个logId
+		logId, err := gostrgen.RandGen(32, gostrgen.LowerUpperDigit, "", "")
+		if err != nil {
+			log.DefaultLogError("0", "create log id failed", err)
+			logId = "0"
+		}
+		c.Set(api_define.CtxLogIdKey, logId)
+	})
 	r.Use(middleware_cors.Cors(config.GetCorsConfig()))
 
 	// use session middleware

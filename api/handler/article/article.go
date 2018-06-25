@@ -1,7 +1,6 @@
 package article
 
 import (
-	"fmt"
 	"strconv"
 
 	"blog_api/api/define"
@@ -25,9 +24,10 @@ func Create() gin.HandlerFunc {
 		pbResp := &pb.CreateArticleResponse{}
 		postReq := &CreateArticleRequest{}
 		err = c.ShouldBind(postReq)
-		log.DefaultLog().Debugf("req:%v err:%v", postReq, err)
+		log.DefaultLogDebug(c.GetString(api_define.CtxLogIdKey), "")
 		if err != nil {
-			pbResp.Code = -1
+			log.DefaultLogError(c.GetString(api_define.CtxLogIdKey), "", err)
+			pbResp.Code = pb.ResponseCode_QueryArgumentsError
 			pbResp.Msg = err.Error()
 			c.Set(define.CtxRespKey, pbResp)
 			return
@@ -37,13 +37,15 @@ func Create() gin.HandlerFunc {
 			Content: postReq.Content,
 			UserId:  0,
 		}
-		err = model_article.Create(article)
+		modelArticle := model_article.NewModel(c)
+		err = modelArticle.Create(article)
 		if err != nil {
-			pbResp.Code = -1
-			pbResp.Msg = err.Error()
+			log.DefaultLogError(c.GetString(api_define.CtxLogIdKey), "", err)
+			pbResp.Code = pb.ResponseCode_InternalError
+			pbResp.Msg = ""
 			c.Set(define.CtxRespKey, pbResp)
+			return
 		}
-		log.DefaultLog().Debugf("create rst: %v", article)
 		pbResp.Data = &pb.ArticleData{
 			Id:      strconv.FormatInt(article.Id, 10),
 			Title:   article.Title,
@@ -70,19 +72,23 @@ func GetList() gin.HandlerFunc {
 		qry := &GetListQuery{}
 		err := c.BindQuery(qry)
 		if err != nil {
+			log.DefaultLogError(c.GetString(api_define.CtxLogIdKey), "", err)
 			resp.Code = pb.ResponseCode_QueryArgumentsError
 			c.Set(api_define.CtxRespKey, resp)
+			return
 		}
-
-		list, err := model_article.GetList(qry.Offset, qry.Limit)
+		modelArticle := model_article.NewModel(c)
+		list, err := modelArticle.GetList(qry.Offset, qry.Limit)
 		if err != nil {
+			log.DefaultLogError(c.GetString(api_define.CtxLogIdKey), "", err)
 			resp.Code = pb.ResponseCode_InternalError
 			c.Set(api_define.CtxRespKey, resp)
 			return
 		}
 
-		num, err := model_article.GetNum()
+		num, err := modelArticle.GetNum()
 		if err != nil {
+			log.DefaultLogError(c.GetString(api_define.CtxLogIdKey), "", err)
 			resp.Code = pb.ResponseCode_InternalError
 			c.Set(api_define.CtxRespKey, resp)
 			return
@@ -119,16 +125,19 @@ func GetById() gin.HandlerFunc {
 		articleIdStr := c.Param("articleId")
 		articleId, err := strconv.ParseInt(articleIdStr, 10, 64)
 		if err != nil {
-			pbResp.Code = 100
+			log.DefaultLogError(c.GetString(api_define.CtxLogIdKey), "", err)
+			pbResp.Code = pb.ResponseCode_QueryArgumentsError
 			pbResp.Msg = err.Error()
 			c.Set(define.CtxRespKey, pbResp)
 		}
-
-		article, err := model_article.GetById(articleId)
+		modelArticle := model_article.NewModel(c)
+		article, err := modelArticle.GetById(articleId)
 		if err != nil {
-			pbResp.Code = 100
-			pbResp.Msg = err.Error()
+			log.DefaultLogError(c.GetString(api_define.CtxLogIdKey), "", err)
+			pbResp.Code = pb.ResponseCode_InternalError
+			pbResp.Msg = ""
 			c.Set(define.CtxRespKey, pbResp)
+			return
 		}
 
 		pbResp.Data = &pb.ArticleData{
@@ -137,6 +146,5 @@ func GetById() gin.HandlerFunc {
 			Content: article.Content,
 		}
 		c.Set(define.CtxRespKey, pbResp)
-		fmt.Printf("cookie:%v\n", c.Request.Cookies())
 	}
 }
