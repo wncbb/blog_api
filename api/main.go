@@ -134,7 +134,7 @@ func main() {
 }
 
 func accessDatabase() {
-	tm := time.NewTicker(3600 * time.Second)
+	tm := time.NewTicker(60 * time.Second)
 	for {
 		select {
 		case <-tm.C:
