@@ -3,6 +3,8 @@ package log
 import (
 	"io"
 	"os"
+	"runtime"
+	"time"
 
 	"github.com/sirupsen/logrus"
 )
@@ -47,4 +49,28 @@ func GetLog(key string) *logrus.Logger {
 
 func DefaultLog() *logrus.Logger {
 	return LogMap[defaultKey]
+}
+
+func DefaultLogError(id string, msg string, err error) {
+	_, file, line, _ := runtime.Caller(1)
+	LogMap[defaultKey].Errorf(
+		"ts:`%s`, id:`%s`, location:`%s@%d`, msg:`%s`, err:`%v`",
+		time.Now().Format("2006-01-02 15:04:05"),
+		id,
+		file,
+		line,
+		msg,
+		err,
+	)
+}
+
+func DefaultLogDebug(id string, msg string) {
+	_, file, line, _ := runtime.Caller(1)
+	LogMap[defaultKey].Debugf(
+		"ts: `%s`, id:`%s`, location:`%s@%d`, msg:`%s`",
+		time.Now().Format("2006-01-02 15:04:05"),
+		file,
+		line,
+		msg,
+	)
 }

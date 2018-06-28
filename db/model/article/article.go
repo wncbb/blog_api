@@ -1,6 +1,7 @@
 package article
 
 import (
+	"context"
 	"fmt"
 	"time"
 
@@ -61,16 +62,26 @@ func Migrate() error {
 	return nil
 }
 
-func GetList(offset, limit int64) ([]*Article, error) {
+type ArticleModel struct {
+	ctx context.Context
+}
+
+func NewModel(ctx context.Context) *ArticleModel {
+	return &ArticleModel{
+		ctx: ctx,
+	}
+}
+
+func (p *ArticleModel) GetList(offset, limit int64) ([]*Article, error) {
 	conn, err := readDbHandler.GetConnection()
 	if err != nil {
 		return nil, errors.WithStack(err)
 	}
-	list, err := getList(conn, offset, limit)
+	list, err := p.getList(conn, offset, limit)
 	return list, errors.WithStack(err)
 }
 
-func getList(conn *gorm.DB, offset, limit int64) ([]*Article, error) {
+func (p *ArticleModel) getList(conn *gorm.DB, offset, limit int64) ([]*Article, error) {
 	articles := make([]*Article, 0, limit)
 	err := conn.Model(&Article{}).Order("created_at").Offset(offset).Limit(limit).Find(&articles).Error
 	if err != nil {
@@ -79,39 +90,39 @@ func getList(conn *gorm.DB, offset, limit int64) ([]*Article, error) {
 	return articles, err
 }
 
-func GetNum() (int64, error) {
+func (p *ArticleModel) GetNum() (int64, error) {
 	conn, err := readDbHandler.GetConnection()
 	if err != nil {
 		return 0, errors.WithStack(err)
 	}
-	num, err := getNum(conn)
+	num, err := p.getNum(conn)
 	return num, errors.WithStack(err)
 }
 
-func getNum(conn *gorm.DB) (int64, error) {
+func (p *ArticleModel) getNum(conn *gorm.DB) (int64, error) {
 	var num int64
 	err := conn.Model(&Article{}).Count(&num).Error
 	return num, errors.WithStack(err)
 }
 
-func GetById(id int64) (article *Article, err error) {
+func (p *ArticleModel) GetById(id int64) (article *Article, err error) {
 	conn, err := readDbHandler.GetConnection()
 	if err != nil {
 		return nil, errors.WithStack(err)
 	}
-	article, err = getById(conn, id)
+	article, err = p.getById(conn, id)
 	err = errors.WithStack(err)
 	return
 }
 
-func getById(conn *gorm.DB, id int64) (article *Article, err error) {
+func (p *ArticleModel) getById(conn *gorm.DB, id int64) (article *Article, err error) {
 	article = &Article{}
 	err = conn.Where("id = ?", id).First(article).Error
 	err = errors.WithStack(err)
 	return
 }
 
-func Create(article *Article) (err error) {
+func (p *ArticleModel) Create(article *Article) (err error) {
 	if nil == article {
 		err = errors.New("article is nil")
 		return
@@ -123,12 +134,12 @@ func Create(article *Article) (err error) {
 		return
 	}
 
-	err = create(conn, article)
+	err = p.create(conn, article)
 	err = errors.WithStack(err)
 	return
 }
 
-func create(conn *gorm.DB, article *Article) (err error) {
+func (p *ArticleModel) create(conn *gorm.DB, article *Article) (err error) {
 	conn, err = writeDbHandler.GetConnection()
 	if err != nil {
 		err = errors.WithStack(err)
@@ -140,7 +151,7 @@ func create(conn *gorm.DB, article *Article) (err error) {
 	return
 }
 
-func UpdateByMap(article *Article) (err error) {
+func (p *ArticleModel) UpdateByMap(article *Article) (err error) {
 	if article == nil {
 		panic("model article UpdateByMap article=nil")
 	}
@@ -149,12 +160,12 @@ func UpdateByMap(article *Article) (err error) {
 	if err != nil {
 		err = errors.WithStack(err)
 	}
-	err = updateByMap(conn, article)
+	err = p.updateByMap(conn, article)
 	err = errors.WithStack(err)
 	return err
 }
 
-func updateByMap(conn *gorm.DB, article *Article) (err error) {
+func (p *ArticleModel) updateByMap(conn *gorm.DB, article *Article) (err error) {
 	if article == nil {
 		panic("model article updateByMap article=nil")
 	}

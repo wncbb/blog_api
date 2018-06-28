@@ -6,6 +6,7 @@ import (
 
 	"blog_api/db"
 	"blog_api/define"
+	"blog_api/log"
 	"blog_api/werrors"
 
 	"github.com/jinzhu/gorm"
@@ -67,6 +68,7 @@ func Migrate() (err error) {
 func Create(userCore *UserCore) (err error) {
 	if nil == userCore {
 		err = errors.New("userCore is nil")
+		log.DefaultLogError("", "create user core failed, userCore is nil", err)
 		return
 	}
 	var conn *gorm.DB
