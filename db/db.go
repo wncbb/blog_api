@@ -100,10 +100,10 @@ func (p *DBHandler) GetConnection() (*gorm.DB, error) {
 	if p.Connected {
 		return p.DB, nil
 	}
-	p.mu.Lock()
-	defer func() {
-		p.mu.Unlock()
-	}()
+	// p.mu.Lock()
+	// defer func() {
+	// 	p.mu.Unlock()
+	// }()
 	err := p.Connect()
 	if err != nil {
 		return nil, errors.WithStack(err)
