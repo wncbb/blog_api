@@ -1,2 +1,4 @@
 api/conf/*
 api/main.go.bak
+api/api
+api/out.log
