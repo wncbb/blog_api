@@ -97,10 +97,18 @@ func InitConn(dbConfigMap map[string]*DBConfig) error {
 }
 
 func (p *DBHandler) GetConnection() (*gorm.DB, error) {
+	if p.Connected {
+		return p.DB, nil
+	}
+	p.mu.Lock()
+	defer func() {
+		p.mu.Unlock()
+	}()
 	err := p.Connect()
 	if err != nil {
 		return nil, errors.WithStack(err)
 	}
+	p.Connected = true
 	return p.DB, nil
 }
 
