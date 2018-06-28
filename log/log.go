@@ -1,6 +1,7 @@
 package log
 
 import (
+	"fmt"
 	"io"
 	"os"
 	"runtime"
@@ -31,9 +32,13 @@ func Init(configMap map[string]*LogConfig) {
 
 func init() {
 	LogMap = make(map[string]*logrus.Logger)
-
+	logFile, err := os.OpenFile("./logrus.log", os.O_RDWR|os.O_CREATE, 0755)
+	if err != nil {
+		panic(fmt.Sprintf("Open log file failed, err:%v", err))
+	}
 	log := logrus.New()
-	log.Out = os.Stdout
+	// log.Out = os.Stdout
+	log.Out = logFile
 	log.SetLevel(logrus.DebugLevel)
 
 	LogMap[defaultKey] = log

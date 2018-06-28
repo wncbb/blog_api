@@ -33,6 +33,8 @@ func main() {
 	// init config
 	config.Init()
 
+	gin.SetMode(gin.ReleaseMode)
+
 	// init postgres
 	dal.InitPostgres(config.GetPgDBConf())
 
